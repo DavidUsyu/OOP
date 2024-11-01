@@ -1,0 +1,140 @@
+from abc import ABC, abstractmethod
+
+# Abstract Base Class (Optional for Abstraction)
+class Game(ABC):
+    @abstractmethod
+    def start_game(self):
+        pass
+
+    @abstractmethod
+    def end_game(self):
+        pass
+
+# Player Class with Encapsulation
+class Player(Game):
+    def __init__(self, name, player_type="Beginner"):
+        self.name = name
+        self.__score = 0  # private attribute
+        self.level = 1
+        self.player_type = player_type
+
+    def start_game(self):
+        print(f"Starting game for {self.name}...")
+
+    def end_game(self):
+        print(f"Ending game for {self.name} with final score: {self.__score}")
+
+    # Method to add score (with basic exception handling)
+    def add_score(self, points):
+        try:
+            if points < 0:
+                raise ValueError("Points cannot be negative.")
+            self.__score += points
+        except ValueError as e:
+            print(e)
+
+    # Encapsulation: Getter for private score attribute
+    def get_score(self):
+        return self.__score
+
+    # Level up method
+    def level_up(self):
+        self.level += 1
+        print(f"{self.name} leveled up to level {self.level}!")
+
+# Inheritance & Polymorphism: Subclasses for Different Player Types
+class BeginnerPlayer(Player):
+    def __init__(self, name):
+        super().__init__(name, player_type="Beginner")
+
+    # Overriding add_score method to apply bonus points
+    def add_score(self, points):
+        super().add_score(points)
+        # Beginners get a 10% score bonus
+        self._Player__score += points * 0.1  # Access private variable using _ClassName
+
+class AdvancedPlayer(Player):
+    def __init__(self, name):
+        super().__init__(name, player_type="Advanced")
+
+    # Overriding level_up method with additional actions
+    def level_up(self):
+        super().level_up()
+        print(f"Advanced player {self.name} gains special abilities at level {self.level}.")
+
+# GameLevel Class
+class GameLevel:
+    def __init__(self, level_number, difficulty="Easy"):
+        self.level_number = level_number
+        self.difficulty = difficulty
+
+    def display_level_info(self):
+        print(f"Level {self.level_number} - Difficulty: {self.difficulty}")
+
+# Game workflow
+def game_workflow():
+    player_name = input("Enter player name: ")
+    player_type = input("Choose player type (Beginner/Advanced): ")
+
+    if player_type.lower() == "beginner":
+        player = BeginnerPlayer(player_name)
+    else:
+        player = AdvancedPlayer(player_name)
+
+    player.start_game()
+
+    # Example: Add score, level up, and display final results
+    while True:
+        action = input("Choose action - (score/level/end): ")
+        
+        if action == "score":
+            points = int(input("Enter points to add: "))
+            player.add_score(points)
+            print(f"Current score: {player.get_score()}")
+        
+        elif action == "level":
+            player.level_up()
+        
+        elif action == "end":
+            player.end_game()
+            break
+
+        else:
+            print("Invalid action. Try again.")
+
+# Start the game workflow
+if __name__ == "__main__":
+    game_workflow()
+
+#The Game System is designed to simulate a basic game environment with players who progress through levels and accumulate scores. It showcases object-oriented programming principles including encapsulation, inheritance, polymorphism, and (optionally) abstraction.
+#Purpose of Each Class
+
+    #Game (Abstract Base Class):
+        #This class defines the basic structure of a game with essential methods, start_game and end_game, that all game types should implement.
+        #It serves as a template for other classes and supports abstraction by mandating the implementation of these methods in subclasses.
+
+    #Player (Core Class):
+       # Represents a player in the game and manages essential player attributes like name, score, and level.
+      #Implements encapsulation with a private attribute __score, which is only accessible through the public get_score method.
+        #Methods include:
+           # add_score: Adds points to the player’s score with basic error handling.
+           # level_up: Increments the player's level.
+            #get_score: Returns the player's score.
+
+    #BeginnerPlayer (Subclass of Player):
+        #A specialized player class for beginners that inherits from Player.
+        #Demonstrates inheritance by extending Player and polymorphism by overriding the add_score method to provide a 10% score bonus.
+
+    #AdvancedPlayer (Subclass of Player):
+        #Another specialized player class for advanced players, also inheriting from Player.
+        #Shows polymorphism by overriding the level_up method, adding unique abilities or messages when an advanced player levels up.
+
+    #GameLevel:
+       # Represents different levels in the game, each with a level number and difficulty setting.
+       # Provides information on the level, which players can progress through.
+
+       #Core Functionalities
+
+    #Adding and Managing Scores: Players can accumulate points using the add_score method, with special bonuses for beginners.
+    #Progression through Levels: Players can level up using level_up, with advanced players receiving additional features at each new level.
+    #Exception Handling: Prevents adding negative scores, ensuring that player actions adhere to basic game rules.
